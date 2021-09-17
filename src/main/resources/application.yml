@@ -13,11 +13,15 @@ datasources:
     username: ${JDBC_USER:sa}
     password: ${JDBC_PASSWORD:""}
     driverClassName: ${JDBC_DRIVER:org.h2.Driver}
-
+    schema-generate: CREATE_DROP
+    dialect: H2
 
 
 jpa:
   default:
+    entity-scan:
+      packages:
+        - 'com.example.domain'
     properties:
       hibernate:
         hbm2ddl:

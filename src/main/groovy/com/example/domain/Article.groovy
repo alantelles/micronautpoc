@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity
-@Table(name = "posts")
-class Post {
+@Table(name = "articles")
+class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
@@ -24,15 +24,16 @@ class Post {
     String title;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post")
-    List<Comment> comments = new Comment();
+    @OneToMany(mappedBy = "article")
+    List<Comment> comments ;
 
     @NotNull
     @Column(name = "content", nullable = false)
     String content;
 
+
     String toString() {
-        return "Post: ${id}, title: ${title}" as String
+        return "Article: ${id}, title: ${title}"
     }
 
 }

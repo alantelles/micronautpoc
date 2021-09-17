@@ -12,19 +12,21 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "comments")
 class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
     @ManyToOne
-    Post post;
+    Article article;
 
     @NotNull
     @Column(name = "content", nullable = false)
     String content;
 
     String toString() {
-        return "Comment: ${id}, from post: ${post.id}" as String
+        return "Comment: ${id}, from post: " as String
     }
+
 
 }
