@@ -1,5 +1,6 @@
 package com.example.controllers
 
+import com.example.annotations.Envelope
 import com.example.commands.articles.ArticleSaveCommand
 import com.example.commands.articles.ArticleUpdateCommand
 import com.example.domain.Article
@@ -14,6 +15,8 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.scheduling.TaskExecutors
 import io.micronaut.scheduling.annotation.ExecuteOn
+import jakarta.inject.Inject
+import jakarta.inject.Named
 
 import javax.persistence.PersistenceException
 import javax.validation.Valid
@@ -23,9 +26,9 @@ import javax.validation.Valid
 class ArticlesController {
 
 
-    protected final ArticleRepository articleRepository
+    final ArticleRepository articleRepository
 
-    ArticlesController(ArticleRepository articleRepository) {
+    ArticlesController(@Named('scientific') ArticleRepository articleRepository) {
         this.articleRepository = articleRepository
     }
 
@@ -35,35 +38,36 @@ class ArticlesController {
     }
 
     @Get("/{id}")
-    Article show(Long id) {
-        return articleRepository
+    @Envelope
+    HttpResponse<Article> show(Long id) {
+        Article article = articleRepository
                 .findById(id)
                 .orElse(null)
+        return article ? HttpResponse.ok(article) : HttpResponse.notFound(article)
     }
 
     @Put("/{id}")
-    HttpResponse update(@Body @Valid ArticleUpdateCommand command) {
-        int affected = articleRepository.update(command.id, command.title, command.body)
+    HttpResponse update(@Body @Valid ArticleUpdateCommand command, Long id) {
+        int affected = articleRepository.update(id, command.title, command.content)
 
         return HttpResponse
                 .noContent()
-                .header(HttpHeaders.LOCATION, location(command.id).getPath())
-                .header("X-updated", affected)
+                .header(HttpHeaders.LOCATION, location(id).getPath())
+                .header("X-updated", affected.toString())
     }
 
     @Post
     HttpResponse<Article> save(@Body @Valid ArticleSaveCommand command) {
-        Article article = articleRepository.save(command.title, command.body)
-        return HttpResponse.created(article)
-            .header("X-deu-certo", true)
+        Article article = articleRepository.save(command.title, command.content)
+        return HttpResponse.created(article).header('X-deu-certo', 'true')
     }
 
     @Post("/ex")
     HttpResponse<Article> saveExceptions(@Body @Valid ArticleSaveCommand command) {
         try {
-            Article article = articleRepository.saveWithException(command.title, command.body)
+            Article article = articleRepository.saveWithException(command.title, command.content)
             return HttpResponse.created(article)
-                .header("x-deu-certo": true)
+                .header("x-deu-certo": 'true')
         } catch(PersistenceException e) {
             return HttpResponse.noContent()
         }

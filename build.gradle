@@ -22,9 +22,7 @@ micronaut {
 
 dependencies {
     implementation("io.micronaut:micronaut-http-client")
-
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-
     implementation("io.micronaut.groovy:micronaut-runtime-groovy")
 
     implementation("io.micronaut.jaxrs:micronaut-jaxrs-server")
@@ -46,6 +44,11 @@ dependencies {
     testCompileOnly("io.micronaut.jaxrs:micronaut-jaxrs-processor")
 
     implementation("io.micronaut:micronaut-validation")
+
+
+    annotationProcessor("io.micronaut:micronaut-inject-java:3.0.1")
+
+
 }
 
 
@@ -56,6 +59,3 @@ java {
     sourceCompatibility = JavaVersion.toVersion("11")
     targetCompatibility = JavaVersion.toVersion("11")
 }
-
-
-

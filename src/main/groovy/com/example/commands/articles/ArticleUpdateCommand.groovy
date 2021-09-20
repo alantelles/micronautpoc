@@ -7,12 +7,12 @@ import javax.validation.constraints.NotNull
 
 @Introspected
 class ArticleUpdateCommand {
-    @NotNull
-    Long id;
+//    @NotNull
+//    Long id;
 
     @NotBlank
     String title
 
     @NotBlank
-    String body
+    String content
 }

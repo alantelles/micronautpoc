@@ -10,14 +10,14 @@ interface ArticleRepository {
 
         Optional<Article> findById(@NotNull Long id);
 
-        Article save(@NotBlank String title, @NotBlank String body);
+        Article save(@NotBlank String title, @NotBlank String content);
 
-        Article saveWithException(@NotBlank String title, @NotBlank String body);
+        Article saveWithException(@NotBlank String title, @NotBlank String content);
 
         void deleteById(@NotNull Long id);
 
         List<Article> findAll();
 
-        int update(@NotNull Long id, @NotBlank String title, @NotBlank String body);
+        int update(@NotNull Long id, @NotBlank String title, @NotBlank String content);
 
 }

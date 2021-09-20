@@ -11,6 +11,6 @@ class ArticleSaveCommand {
     String title;
 
     @NotBlank
-    String body;
+    String content;
 
 }

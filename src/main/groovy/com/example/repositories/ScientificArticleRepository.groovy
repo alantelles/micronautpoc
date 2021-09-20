@@ -3,6 +3,8 @@ package com.example.repositories
 import com.example.configs.ApplicationConfiguration
 import com.example.domain.Article
 import io.micronaut.transaction.annotation.ReadOnly
+import jakarta.inject.Named
+import jakarta.inject.Singleton
 
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceException
@@ -11,13 +13,15 @@ import javax.transaction.Transactional
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
-class ArticleRepositoryImpl implements ArticleRepository{
+@Named("scientific")
+@Singleton
+class ScientificArticleRepository implements ArticleRepository{
     final EntityManager entityManager;
     final ApplicationConfiguration applicationConfiguration;
 
-    List<String> VALID_PROPERTY_NAMES = ["id", "title", "body"]
+    List<String> VALID_PROPERTY_NAMES = ["id", "title", "content"]
 
-    ArticleRepositoryImpl(EntityManager entityManager, ApplicationConfiguration applicationConfiguration) {
+    ScientificArticleRepository(EntityManager entityManager, ApplicationConfiguration applicationConfiguration) {
         this.entityManager = entityManager;
         this.applicationConfiguration = applicationConfiguration;
     }
@@ -28,8 +32,12 @@ class ArticleRepositoryImpl implements ArticleRepository{
         return Optional.ofNullable(entityManager.find(Article.class, id))
     }
 
-    Article save(@NotBlank String title, @NotBlank String body) {
-        Article post = new Article(title: title, body: body)
+    @Override
+    @Transactional
+    Article save(@NotBlank String title, @NotBlank String content) {
+        title = "This is a scientific article: " + title
+        content = "Published at now:\n" + content
+        Article post = new Article(title: title, content: content)
         entityManager.persist(post)
         return post
     }
@@ -50,19 +58,19 @@ class ArticleRepositoryImpl implements ArticleRepository{
 
     @Override
     @Transactional
-    int update(@NotNull Long id, @NotBlank String title, @NotBlank String body) {
-        String qStr = "UPDATE Article p SET title = :title, body = :body WHERE id = :id"
+    int update(@NotNull Long id, @NotBlank String title, @NotBlank String content) {
+        String qStr = "UPDATE Article p SET title = :title, content = :content WHERE id = :id"
         return entityManager.createQuery(qStr)
-            .setParameter('body', body)
-            .setParameter('title', title)
-            .setParameter('id', id)
-            .executeUpdate()
+                .setParameter('content', content)
+                .setParameter('title', title)
+                .setParameter('id', id)
+                .executeUpdate()
     }
 
     @Override
     @Transactional
-    Article saveWithException(@NotBlank String title, @NotBlank String body) {
-        save(title, body)
+    Article saveWithException(@NotBlank String title, @NotBlank String content) {
+        save(title, content)
         throw new PersistenceException()
     }
 }
